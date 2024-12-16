@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Redirect URL paths to corresponding PHP files
+RewriteRule ^Home$ index.php [L]
+RewriteRule ^About$ about.php [L]
+RewriteRule ^Products$ product.php [L]
+RewriteRule ^Projects$ projects.php [L]
+RewriteRule ^Customer_Support$ customer_support.php [L]
+RewriteRule ^Contact$ contact.php [L]

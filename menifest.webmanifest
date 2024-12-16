@@ -1,0 +1,23 @@
+{
+    "name": "Vimal Marketing And Services",
+    "short_name": "Vimal Marketing And Services",
+    "description": "Vimal Marketing And Services",
+    "icons": [
+      {
+        "src": "img/Vimal Marketing Logo.jpg",
+        "sizes": "32x32",
+        "type": "image/png"
+      },
+    
+      {
+        "src": "img/Vimal Marketing Logo.jpg",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "https://vimal.in/",
+    "display": "fullscreen",
+    "theme_color": "#fff",
+    "background_color": "#fff"
+  }
+
