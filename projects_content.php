@@ -27,7 +27,7 @@
             </p>
             <br><br>
         </div>
-        <div class="row g-4 portfolio-container">
+        <div class="row g-4 portfolio-container ">
             <?php
             // Query to select all projects
             $query = "SELECT * FROM project ORDER BY id DESC";
@@ -46,8 +46,8 @@
                                     <a class="btn btn-square btn-outline-light mx-1" href="admin/uploads/projects/<?= htmlspecialchars($project['image']) ?>" data-lightbox="portfolio"><i class="fa fa-eye"></i></a>
                                 </div>
                             </div>
-                            <div class="bg-light p-4">
-                                <p class="description">
+                            <div class="bg-white border p-2 ">
+                                <p class="description bg-white" style="text-align:justify;">
                                     <?= htmlspecialchars($project['description']) ?>
                                 </p>
                             </div>

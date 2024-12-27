@@ -55,46 +55,61 @@ if (isset($_POST['submitlogo'])) {
 // Update Logo (Image or Text)
 if (isset($_POST['update_logo'])) {
     $id = $_POST['id'];
-    $logoText = $_POST['logo_text'] ?? null;
-    $imageName = null;
+    $logo_text = mysqli_real_escape_string($con, $_POST['logo_text']);
+    $uploadOk = true;
 
-    if (isset($_POST['input_type'])) {
-        if ($_POST['input_type'] === 'image' && isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-            $imageName = handle_file_upload($_FILES['image'], 'uploads/logos/');
-            if ($imageName) {
-                // Update the database with image
-                $query = "UPDATE `logo` SET img=?, logo_text=NULL WHERE id=?";
-                $stmt = $con->prepare($query);
-                $stmt->bind_param('si', $imageName, $id);
-                $stmt->execute();
-                $stmt->close();
-            }
-        } elseif ($_POST['input_type'] === 'text' && !empty($logoText)) {
-            // Update the database with text
-            $query = "UPDATE `logo` SET img=NULL, logo_text=? WHERE id=?";
-            $stmt = $con->prepare($query);
-            $stmt->bind_param('si', $logoText, $id);
-            $stmt->execute();
-            $stmt->close();
+    // Handle image upload
+    if (!empty($_FILES['image']['name'])) {
+        $target_dir = "uploads/logos/";
+        $target_file = $target_dir . basename($_FILES["image"]["name"]);
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+
+        // Check if the file is an actual image
+        $check = getimagesize($_FILES["image"]["tmp_name"]);
+        if ($check === false) {
+            echo "File is not an image.";
+            $uploadOk = false;
         }
-    }
-}
 
-// Handle image upload for header
-if (isset($_POST['submit'])) {
-    $image_name = handle_file_upload($_FILES['image'], 'uploads/headerimages/');
-    if ($image_name) {
-        $insert = $con->prepare("INSERT INTO `headerimage` (img) VALUES (?)");
-        $insert->bind_param('s', $image_name);
-        if ($insert->execute()) {
-            echo "<script>alert('Image added successfully!'); window.location.href = 'headeredit.php';</script>";
-        } else {
-            echo "<script>alert('Failed to add image.'); window.location.href = 'headeredit.php';</script>";
+        // Check file size
+        if ($_FILES["image"]["size"] > 500000) {
+            echo "Sorry, your file is too large.";
+            $uploadOk = false;
+        }
+
+        // Allow certain file formats
+        if (!in_array($imageFileType, ['jpg', 'jpeg', 'png', 'gif'])) {
+            echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+            $uploadOk = false;
+        }
+
+        if ($uploadOk) {
+            if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                $image_name = htmlspecialchars(basename($_FILES["image"]["name"]));
+
+                // Update the database with both image and text
+                $query = "UPDATE `logo` SET `img`='$image_name', `logo_text`='$logo_text' WHERE `id`='$id'";
+            } else {
+                echo "Sorry, there was an error uploading your file.";
+            }
         }
     } else {
-        echo "<script>alert('Image upload failed.'); window.location.href = 'headeredit.php';</script>";
+        // Update only the logo text if no new image is uploaded
+        $query = "UPDATE `logo` SET `logo_text`='$logo_text' WHERE `id`='$id'";
     }
+
+    // Execute query
+    if (mysqli_query($con, $query)) {
+        echo "Logo updated successfully.";
+    } else {
+        echo "Error updating logo: " . mysqli_error($con);
+    }
+
+    // Redirect to the edit page
+    echo "<script>alert('updated Successfully'); window.location.href = 'headeredit.php';</script>";
+    exit();
 }
+
 
 // Handle deletion of a single image
 if (isset($_GET['id']) && isset($_GET['image'])) {
@@ -216,18 +231,18 @@ if (isset($_POST['update_text'])) {
         </nav>
     </div><!-- End Page Title -->
 
-
-<div class="pagetitle">
+    <div class="pagetitle">
     <div class="text-edit-table">
         <div class="card recent-sales">
             <div class="card-body">
-                <h5 class="card-title">Edit Logo Image</h5>
+                <h5 class="card-title">Edit Logo Image and Text</h5>
                 <div class="table-responsive">
                     <table class="table table-bordered table-sm">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Logo</th>
+                                <th scope="col">Logo Text</th>
                                 <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
@@ -247,120 +262,73 @@ if (isset($_POST['update_text'])) {
                                         <?php } ?>
                                     </td>
                                     <td>
-                                        <a href="#" data-bs-toggle="modal" data-bs-target="#updateLogoModal-<?= $data['id'] ?>" title="Update Logo" class="text-center text-warning fs-4"><i class="bi bi-pencil"></i></a>
+                                        <?= !empty($data['logo_text']) ? htmlspecialchars($data['logo_text']) : 'No text'; ?>
+                                    </td>
+                                    <td class="text-center">
+                                        <!-- Update Icon -->
+                                        <a href="#" data-bs-toggle="modal" data-bs-target="#updateLogoModal-<?= $data['id'] ?>" title="Update Logo" class="text-warning fs-4">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
                                     </td>
                                 </tr>
 
                                 <!-- Update Logo Modal -->
-                               <!-- Update Logo Modal -->
-<!-- Update Logo Modal -->
-<div class="modal fade" id="updateLogoModal-<?= $data['id'] ?>" tabindex="-1" aria-labelledby="updateLogoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="updateLogoModalLabel">Update Logo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="headeredit.php" method="POST" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <input type="hidden" name="id" value="<?= $data['id'] ?>">
-                    
-                    <div class="mb-3">
-                        <label class="form-label">Choose Type:</label>
-                        <div>
-                            <input type="radio" id="updateLogoImage" name="input_type" value="image" onchange="toggleInput('update', 'image')" checked>
-                            <label for="updateLogoImage">Image Logo</label>
-                            
-                            <input type="radio" id="updateLogoText" name="input_type" value="text" onchange="toggleInput('update', 'text')">
-                            <label for="updateLogoText">Text Logo</label>
-                        </div>
-                    </div>
+                                <div class="modal fade" id="updateLogoModal-<?= $data['id'] ?>" tabindex="-1" aria-labelledby="updateLogoModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="updateLogoModalLabel">Update Logo</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form action="headeredit.php" method="POST" enctype="multipart/form-data">
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="id" value="<?= $data['id'] ?>">
 
-                    <div id="updateLogoImageInput" class="mb-3">
-                        <!-- <label for="image" class="form-label">Upload New Logo (optional)</label> -->
-                        <input type="file" class="form-control" name="image" accept="image/*">
-                    </div>
+                                                    <div class="mb-3 text-center">
+                                                        <label class="form-label">Current Logo</label>
+                                                        <?php if (!empty($data['img'])) { ?>
+                                                            <div>
+                                                                <img src="uploads/logos/<?= $data['img'] ?>" width="150px" alt="Logo" class="mb-2">
+                                                                <a href="delete_logo.php?id=<?= $data['id'] ?>" onclick="return confirm('Are you sure you want to delete this logo?')" class="btn btn-danger btn-sm">
+                                                                    <i class="bi bi-trash"></i> Delete
+                                                                </a>
+                                                            </div>
+                                                        <?php } else { ?>
+                                                            <p>No image uploaded</p>
+                                                        <?php } ?>
+                                                    </div>
 
-                    <div id="updateLogoTextInput" class="mb-3" style="display:none;">
-                        <!-- <label for="logo_text" class="form-label">Logo Text (optional)</label> -->
-                        <input type="text" class="form-control" name="logo_text" value="<?= $data['logo_text'] ?? '' ?>">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" name="update_logo" class="btn btn-primary">Update Logo</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- End Update Logo Modal -->
+                                                    <div class="mb-3">
+                                                        <label for="image" class="form-label">Upload New Logo (optional)</label>
+                                                        <input type="file" class="form-control" name="image" accept="image/*">
+                                                    </div>
 
-
-
-
-
-
+                                                    <div class="mb-3">
+                                                        <label for="logo_text" class="form-label">Logo Text (optional)</label>
+                                                        <input type="text" class="form-control" name="logo_text" value="<?= htmlspecialchars($data['logo_text']) ?>">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" name="update_logo" class="btn btn-primary">Update Logo</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
                                 <!-- End Update Logo Modal -->
-
                             <?php
                                 $c++;
                             }
                             ?>
                         </tbody>
                     </table>
-
-                    <!-- Add Logo Button -->
-                    <!-- <a href="#" data-bs-toggle="modal" data-bs-target="#addLogoModal" title="Add Logo" class="btn btn-primary py-2 px-4 rounded-pill">Add Logo</a> -->
-                    
-                    <!-- Add Logo Modal -->
-                    <!-- Add Logo Modal -->
-<!-- Add Logo Modal -->
-<div class="modal fade" id="addLogoModal" tabindex="-1" aria-labelledby="addLogoModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addLogoModalLabel">Add Logo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="headeredit.php" method="POST" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Choose Type:</label>
-                        <div>
-                            <input type="radio" id="addLogoImage" name="input_type" value="image" onchange="toggleInput('add', 'image')" checked>
-                            <label for="addLogoImage">Upload New Logo</label>
-                            
-                            <input type="radio" id="addLogoText" name="input_type" value="text" onchange="toggleInput('add', 'text')">
-                            <label for="addLogoText">Logo Text</label>
-                        </div>
-                    </div>
-
-                    <div id="addLogoImageInput" class="mb-3">
-                        <label for="image" class="form-label">Upload New Logo (optional)</label>
-                        <input type="file" class="form-control" name="image" accept="image/*">
-                    </div>
-
-                    <div id="addLogoTextInput" class="mb-3" style="display:none;">
-                        <label for="logo_text" class="form-label">Logo Text (optional)</label>
-                        <input type="text" class="form-control" name="logo_text">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" name="submitlogo" class="btn btn-primary">Add Logo</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- End Add Logo Modal -->
-                    <!-- End Add Logo Modal -->
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 
         <!-- Text Editing Table 1 -->
         <div class="text-edit-table">

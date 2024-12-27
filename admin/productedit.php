@@ -1,9 +1,8 @@
-
-
 <?php
 include('header.php');
 include('sidebar.php');
-?><?php
+?>
+<?php
 $categoryQuery = mysqli_query($con, "SELECT * FROM categories ORDER BY name ASC");
 
 if (mysqli_num_rows($categoryQuery) > 0) {
@@ -58,9 +57,6 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete_category') {
 
 // Handle product submission
 
-
-
-
 // Handle deletion of a single image
 if (isset($_GET['id']) && isset($_GET['delete_main_image']) && $_GET['delete_main_image'] == 'true') {
     $id = (int)$_GET['id'];
@@ -92,6 +88,9 @@ if (isset($_GET['id']) && isset($_GET['delete_main_image']) && $_GET['delete_mai
 <?php
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_product'])) {
+    // Debugging: Check if the form is being submitted
+
+
     // Get form data
     $id = $_POST['id'];
     $title = $_POST['title'];
@@ -105,8 +104,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_product'])) {
         $imageName = time() . '-' . $_FILES['image']['name'];
         move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/productimages/' . $imageName);
         // Update the product image in the database
-        $updateProductQuery = "UPDATE product_images SET image = '$imageName' WHERE id = '$id'";
-        mysqli_query($con, $updateProductQuery);
+        $updateProductQuery = "UPDATE product_images SET img = '$imageName' WHERE id = '$id'";
+        if (mysqli_query($con, $updateProductQuery)) {
+            // echo "Product image updated successfully.";
+        } else {
+            // echo "Error updating product image: " . mysqli_error($con);
+        }
     }
 
     // Sub-image upload
@@ -119,14 +122,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_product'])) {
             move_uploaded_file($subImages['tmp_name'][$i], 'uploads/product_sub_images/' . $fileName);
 
             // Insert sub-image into the database
-            $insertSubImageQuery = "INSERT INTO product_sub_images (product_id, image) VALUES ('$id', '$fileName')";
-            mysqli_query($con, $insertSubImageQuery);
+            $insertSubImageQuery = "INSERT INTO product_sub_images (product_id, img) VALUES ('$id', '$fileName')";
+            if (mysqli_query($con, $insertSubImageQuery)) {
+                // echo "Sub-image added successfully.";
+            } else {
+                // echo "Error adding sub-image: " . mysqli_error($con);
+            }
         }
     }
 
     // Update product details in the database
-    $updateProductDetailsQuery = "UPDATE products SET title = '$title', category_id = '$category_id', description = '$description', costing = '$costing', discounted_price = '$discounted_price' WHERE id = '$id'";
-    mysqli_query($con, $updateProductDetailsQuery);
+    $updateProductDetailsQuery = "UPDATE product_images SET title = '$title', category_id = '$category_id', description = '$description', costing = '$costing', discounted_price = '$discounted_price' WHERE id = '$id'";
+    if (mysqli_query($con, $updateProductDetailsQuery)) {
+        // echo "Product details updated successfully.";
+    } else {
+        // echo "Error updating product details: " . mysqli_error($con);
+    }
 }
 ?>
 
@@ -195,6 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
 ?>
 
 
+
 <style>
 .container {
     display: flex;
@@ -239,41 +251,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
         </nav>
 
     </div><!-- End Page Title -->
+
     <div class="text-edit-table">
     <div class="card recent-sales">
         <div class="card-body">
             <h5 class="card-title">Manage Categories</h5>
             <div class="table-responsive">
-                <table class="table table-bordered table-sm">
+                <table class="table table-bordered table-sm" id="categoriesTable">
                     <thead>
-                        <tr>
+                        <tr draggable="false">
                             <th scope="col">#</th>
                             <th scope="col">Category Name</th>
-                            <th scope="col" class="text-center" colspan="2">Action</th>
+                            <th scope="col" class="text-center" colspan="3">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
-                        // Fetch all records from the categories table
-                        $categoryQuery = mysqli_query($con, "SELECT * FROM categories ORDER BY id DESC");
-                        $c = 1;
-                        while ($data = mysqli_fetch_array($categoryQuery)) {
-                        ?>
-                            <tr>
-                                <th scope="row"><?= $c; ?></th>
-                                <td><?= $data['name']; ?></td>
-                                <td>
-    <a href="#" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal-<?= $data['id'] ?>" title="Delete Category" class="text-center text-danger fs-4">
-        <i class="bi bi-trash"></i>
-    </a>
-</td>
-
-
-                                <td>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#updateCategoryModal-<?= $data['id'] ?>" title="Update Category" class="text-center text-warning fs-4"><i class="bi bi-pencil"></i></a>
-
-                                </td>
-                            </tr>
+<?php
+// Fetch all records from the categories table
+$categoryQuery = mysqli_query($con, "SELECT * FROM categories ORDER BY position ASC");
+$c = 1;
+while ($data = mysqli_fetch_array($categoryQuery)) {
+?>
+    <tr data-id="<?= $data['id'] ?>" class="draggable">
+        
+        <th scope="row"><?= $c; ?></th>
+        <td><?= $data['name']; ?></td>
+        <td>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#deleteCategoryModal-<?= $data['id'] ?>" title="Delete Category" class="text-center text-danger fs-4">
+                <i class="bi bi-trash"></i>
+            </a>
+        </td>
+        <td>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#updateCategoryModal-<?= $data['id'] ?>" title="Update Category" class="text-center text-warning fs-4">
+                <i class="bi bi-pencil"></i>
+            </a>
+        </td>
+        <td>
+            <button class="btn btn-outline-secondary btn-sm drag-handle" title="Drag to reorder">
+                <i class="bi bi-arrows-move"></i>
+            </button>
+        </td>
+    </tr>
                             <!-- Delete Category Modal -->
 <div class="modal fade" id="deleteCategoryModal-<?= $data['id'] ?>" tabindex="-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -372,6 +390,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
         </div>
     </div>
 </div>
+
+
+<script>
+   const table = document.getElementById("categoriesTable");
+let draggedRow = null;
+
+table.addEventListener("mousedown", (e) => {
+    // Enable dragging only when clicking the drag handle
+    const dragHandle = e.target.closest(".drag-handle");
+    if (dragHandle) {
+        draggedRow = dragHandle.closest("tr");
+        draggedRow.setAttribute("draggable", "true");
+    }
+});
+
+table.addEventListener("dragstart", (e) => {
+    if (draggedRow !== e.target) {
+        e.preventDefault();
+    }
+});
+
+table.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    const targetRow = e.target.closest("tr");
+    if (targetRow && targetRow !== draggedRow && !targetRow.closest("thead")) {
+        const rect = targetRow.getBoundingClientRect();
+        const next = e.clientY > rect.top + rect.height / 2;
+        targetRow.parentNode.insertBefore(draggedRow, next ? targetRow.nextSibling : targetRow);
+    }
+});
+
+table.addEventListener("dragend", () => {
+    if (draggedRow) {
+        draggedRow.setAttribute("draggable", "false");
+        draggedRow = null;
+
+        // Update the order in the database
+        const ids = Array.from(table.querySelectorAll("tbody tr")).map(row => row.dataset.id);
+        fetch("updateCategoryOrder.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ order: ids }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("Category order updated successfully!");
+            } else {
+                alert("Failed to update category order.");
+            }
+        });
+    }
+});
+</script>
+
 <div class="text-edit-table">
     <div class="card recent-sales">
         <div class="card-body">
@@ -475,79 +550,81 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_product'])) {
 
                         <!-- Update Product Image Modal -->
                         <div class="modal fade" id="updateProductImageModal-<?= $row['id'] ?>" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Update Product</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <form id="updateProductForm-<?= $row['id'] ?>" action="productedit.php" method="POST" enctype="multipart/form-data">
-                                        <div class="modal-body">
-                                            <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                                            <!-- Product Name and other fields here -->
-                                            <div class="mb-3">
-                                                <label for="title" class="form-label">Product Name</label>
-                                                <input type="text" class="form-control" name="title" value="<?= $row['title'] ?>" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="category" class="form-label">Category</label>
-                                                <select name="category_id" class="form-select" required>
-                                                    <option value="">Select Category</option>
-                                                    <?php
-                                                    $categoryQuery = mysqli_query($con, "SELECT * FROM categories ORDER BY name ASC");
-                                                    while ($category = mysqli_fetch_assoc($categoryQuery)) {
-                                                        $selected = ($category['id'] == $row['category_id']) ? 'selected' : '';
-                                                        echo "<option value='" . $category['id'] . "' $selected>" . $category['name'] . "</option>";
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="description" class="form-label">Description</label>
-                                                <textarea class="form-control" name="description" rows="3" required><?= $row['description'] ?></textarea>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="costing" class="form-label">Cost</label>
-                                                <input type="number" class="form-control" name="costing" step="0.01" value="<?= $row['costing'] ?>" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="discounted_price" class="form-label">Discounted Price</label>
-                                                <input type="number" class="form-control" name="discounted_price" step="0.01" value="<?= $row['discounted_price'] ?>">
-                                            </div>
-                                            <!-- Main Image Upload -->
-                                            <div class="mb-3">
-                                                <label for="image" class="form-label">Upload New Image</label>
-                                                <input type="file" class="form-control" name="image">
-                                            </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="updateProductForm-<?= $row['id'] ?>" action="productedit.php" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" name="title" value="<?= $row['title'] ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select name="category_id" class="form-select" required>
+                            <option value="">Select Category</option>
+                            <?php
+                            $categoryQuery = mysqli_query($con, "SELECT * FROM categories ORDER BY name ASC");
+                            while ($category = mysqli_fetch_assoc($categoryQuery)) {
+                                $selected = ($category['id'] == $row['category_id']) ? 'selected' : '';
+                                echo "<option value='" . $category['id'] . "' $selected>" . $category['name'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3" required><?= $row['description'] ?></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="costing" class="form-label">Cost</label>
+                        <input type="number" class="form-control" name="costing" step="0.01" value="<?= $row['costing'] ?>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="discounted_price" class="form-label">Discounted Price</label>
+                        <input type="number" class="form-control" name="discounted_price" step="0.01" value="<?= $row['discounted_price'] ?>">
+                    </div>
 
-                                            <!-- Sub-Image Upload Section -->
-                                            <div class="subimage">
-                                                <h6>Multiple Images For <?= $row['title']; ?></h6>
-                                                <div class="row" id="subImageContainer">
-                                                    <?php
-                                                    // Fetch sub-images for the current product
-                                                    $subImagesQuery = "SELECT * FROM product_sub_images WHERE product_id = " . $row['id'];
-                                                    $subImagesResult = mysqli_query($con, $subImagesQuery);
-                                                    while ($subImage = mysqli_fetch_assoc($subImagesResult)) {
-                                                    ?>
-                                                    <div class="col-md-3">
-                                                        <img src="uploads/product_sub_images/<?= $subImage['image']; ?>" width="100px" alt="<?= $subImage['title']; ?>">
-                                                        <a href="delete_sub_image.php?id=<?= $subImage['id'] ?>&product_id=<?= $row['id'] ?>" class="text-danger"><i class="bi bi-trash"></i></a>
-                                                    </div>
-                                                    <?php } ?>
-                                                </div>
-                                                <label for="sub_images" class="form-label">Upload Sub-Images</label>
-                                                <input type="file" class="form-control" name="sub_images[]" multiple>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            <button type="submit" class="btn btn-primary" name="update_product">Confirm</button>
-                                        </div>
-                                    </form>
-                                </div>
+                    <!-- Main Image Upload -->
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Upload New Image</label>
+                        <input type="file" class="form-control" name="image">
+                    </div>
+
+                    <!-- Sub-Image Upload Section -->
+                    <div class="subimage">
+                        <h6>Multiple Images For <?= $row['title']; ?></h6>
+                        <div class="row" id="subImageContainer">
+                            <?php
+                            // Fetch sub-images for the current product
+                            $subImagesQuery = "SELECT * FROM product_sub_images WHERE product_id = " . $row['id'];
+                            $subImagesResult = mysqli_query($con, $subImagesQuery);
+                            while ($subImage = mysqli_fetch_assoc($subImagesResult)) {
+                            ?>
+                            <div class="col-md-3">
+                                <img src="uploads/product_sub_images/<?= $subImage['image']; ?>" width="100px" alt="<?= $subImage['title']; ?>">
+                                <a href="delete_sub_image.php?id=<?= $subImage['id'] ?>&product_id=<?= $row['id'] ?>" class="text-danger"><i class="bi bi-trash"></i></a>
                             </div>
+                            <?php } ?>
                         </div>
+                        <label for="sub_images" class="form-label">Upload Sub-Images</label>
+                        <input type="file" class="form-control" name="sub_images[]" multiple>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" name="update_product">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 
                         <?php $count++; } ?>
                     </tbody>

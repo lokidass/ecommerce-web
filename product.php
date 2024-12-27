@@ -1,7 +1,5 @@
 <?php include('header.php') ?>
-
-<div style="height: 6px;"></div> <!-- Spacer div, adjust height as needed -->
-
+<!-- <div style="height: 6px;"></div> Spacer div, adjust height as needed -->
 <div class="container-xxl py-4"> 
     <div class="container my-3 py-3 px-lg-5"> 
         <div class="row g-3"> 

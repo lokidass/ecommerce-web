@@ -1,3 +1,8 @@
+<style>
+/* General styles for gaps */
+</style>
+
+
 <?php
 include 'config.php';
 
@@ -9,7 +14,7 @@ if (isset($_POST['category_id'])) {
         $query = "SELECT product_images.*, categories.name AS category_name 
                   FROM product_images 
                   LEFT JOIN categories ON product_images.category_id = categories.id 
-                  ORDER BY categories.name, product_images.id DESC";
+                  ORDER BY categories.position, product_images.id DESC";
 
         $result = mysqli_query($con, $query);
 
@@ -17,12 +22,13 @@ if (isset($_POST['category_id'])) {
         $productCount = 0;
 
         echo '
-        <div style="margin-top:-30px;"></div><div class="container py-5" style="max-width: 1200px; margin: 0 auto;">';
+        <div style="margin-top:-30px;"></div>
+        <div class="container py-5" style="max-width: 1200px; margin: 0 auto;">';
 
         while ($product = mysqli_fetch_assoc($result)) {
             if ($lastCategory != $product['category_name']) {
                 if ($productCount > 0) {
-                    echo '</div>'; // Close previous row
+                    echo '</div> <div style="margin-top:50px;">'; // Close previous row
                 }
 
                 $lastCategory = $product['category_name'];
@@ -39,15 +45,15 @@ if (isset($_POST['category_id'])) {
                 <div class="col">
                     <div class="related-product-card d-flex flex-column position-relative" style="border: 1px solid #ddd; border-radius: 10px; overflow: hidden; height: 100%; margin-bottom: 20px;">
                         <a href="product_detail.php?product_id=' . htmlspecialchars($product['id']) . '" class="text-decoration-none d-flex flex-column flex-grow-1">
-                            <img src="admin/uploads/productimages/' . htmlspecialchars($product['img']) . '" class="card-img-top img-fluid" alt="' . htmlspecialchars($product['title']) . '" style="height: auto; object-fit: cover;">
+                            <img src="admin/uploads/productimages/' . htmlspecialchars($product['img']) . '" class="card-img-top img-fluid" alt="' . htmlspecialchars($product['title']) . '" style="height: 200px; object-fit: cover;">
                             <div class="card-body d-flex flex-column flex-grow-1">
-                                <h5 class="card-title mb-2" style="font-size: 14px;">'
+                                <h5 class="card-title mb-2" style="font-size: 13px;">'
                                     . htmlspecialchars($product['title']) . '
                                 </h5>
-                                <s class="card-text mb-1" style="font-size: 13px; color: black;">
+                                <s class="card-text mb-1" style="font-size: 12px; color: black;">
                                     ₹' . number_format($product['costing'], 2) . '
                                 </s>
-                                <p class="card-text mb-3" style="font-size: 14px; color: black;">
+                                <p class="card-text mb-3" style="font-size: 13px; color: black;">
                                     ₹' . number_format($product['discounted_price'], 2) . '
                                 </p>
                             </div>
@@ -62,7 +68,7 @@ if (isset($_POST['category_id'])) {
 
         echo '</div>'; // Close last row
         echo '</div>
-        <div style="margin-top:30px;">'; // Close container
+        '; // Close container
     } else {
         // Query to fetch all products for a specific category
         $query = "SELECT product_images.*, categories.name AS category_name 
@@ -89,7 +95,7 @@ if (isset($_POST['category_id'])) {
             <div class="col">
                 <div class="related-product-card d-flex flex-column position-relative" style="border: 1px solid #ddd; border-radius: 10px; overflow: hidden; height: 100%; margin-bottom: 20px;">
                     <a href="product_detail.php?product_id=' . htmlspecialchars($product['id']) . '" class="text-decoration-none d-flex flex-column flex-grow-1">
-                        <img src="admin/uploads/productimages/' . htmlspecialchars($product['img']) . '" class="card-img-top img-fluid" alt="' . htmlspecialchars($product['title']) . '" style="height: auto; object-fit: cover;">
+                        <img src="admin/uploads/productimages/' . htmlspecialchars($product['img']) . '" class="card-img-top img-fluid" alt="' . htmlspecialchars($product['title']) . '" style="height: 200px; object-fit: cover;">
                         <div class="card-body d-flex flex-column flex-grow-1">
                             <h5 class="card-title mb-2" style="font-size: 14px;">'
                                 . htmlspecialchars($product['title']) . '

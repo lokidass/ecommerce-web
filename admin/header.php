@@ -27,7 +27,6 @@ if ($result && mysqli_num_rows($result) > 0) {
     $logo = 'defaultlogo.jpg'; // Replace with the path to your default logo image
     $logo_text = 'Your Brand';  // Default text if no logo or text is available
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -74,6 +73,29 @@ if ($result && mysqli_num_rows($result) > 0) {
       .navbar-custom .dropdown-header {
           color: white; /* Color for dropdown header */
       }
+
+      /* Adjust logo and text alignment */
+      .logo {
+          display: flex;
+          align-items: center;
+      }
+
+      .logo img {
+          max-height: 40px; /* Set max height for the logo */
+          margin-right: 10px; /* Add some space between the logo and text */
+      }
+
+      .logo h1 {
+          font-size: 20px; /* Set a proper size for the text */
+          margin: 0;
+          font-weight: bold;
+          color: black;
+      }
+
+      .logo span {
+          font-size: 16px; /* Adjust the size of the text */
+          color: #333;
+      }
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
@@ -95,17 +117,14 @@ if ($result && mysqli_num_rows($result) > 0) {
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="index.php" class="logo d-flex align-items-center">
-      <h1 class="m-0">
-        <?php if (!empty($logo)) { ?>
-            <img src="uploads/logos/<?php echo $logo; ?>" style="width: 100%; height: 100%;" alt="Logo">
-        <?php } elseif (!empty($logo_text)) { ?>
-            <!-- Display text as logo if no image is available -->
-            <span style="font-size: 2rem; font-weight: bold; color:white"><?php echo $logo_text; ?></span>
-        <?php } else { ?>
-            <!-- Fallback text in case both logo image and text are missing -->
-            <span style="font-size: 2rem; font-weight: bold; color:white">Your Brand</span>
-        <?php } ?>
-    </h1>
+        <h1 class="m-0">
+          <?php if (!empty($logo)) { ?>
+            <img src="uploads/logos/<?php echo $logo; ?>" alt="Logo">
+          <?php } ?>
+          <span>
+            <?php echo !empty($logo_text) ? $logo_text : 'Your Brand'; ?>
+          </span>
+        </h1>
       </a>
       <i class="bi bi-list toggle-sidebar-btn" style="color:black;"></i>
     </div><!-- End Logo -->
@@ -133,7 +152,9 @@ if ($result && mysqli_num_rows($result) > 0) {
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="../img/Vimal Marketing Logo.jpg" alt="Profile" class="rounded-circle">
+          <!-- <?php if (!empty($logo)) { ?>
+            <img src="uploads/logos/<?php echo $logo; ?>" alt="Logo">
+          <?php } ?> -->
             <span class="d-none d-md-block dropdown-toggle ps-2">Vimal Marketing And Services</span>
           </a><!-- End Profile Image Icon -->
 

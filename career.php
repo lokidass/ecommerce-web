@@ -71,6 +71,7 @@
                                         <option value="Sales Executive">Sales Executive</option>
                                         <option value="Customer Support">Customer Support</option>
                                         <option value="Manager">Manager</option>
+                                        <option value="Manager">Other</option>
                                     </select>
                                     <label for="position">Position Applying For</label>
                                 </div>

@@ -1,5 +1,4 @@
     <style>
-
     /* Quick Contact Container */
     .quickcon {
         position: fixed;
@@ -57,7 +56,7 @@
         height: 50px;  /* Increased size */
         font-size: 30px;  /* Increased font size of icons */
         border-radius: 50%;
-        color: white;
+        color: black;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -70,36 +69,28 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, .5);
     }
 
-    .whatsapp {
-        background-color: #26d367;
+    .whatsapp, .gogl, .fb, .inst, .call {
+        background-color:rgb(187, 219, 245);
     }
-    .gogl {
-        background-color: #eb2300;
-    }
-    .fb {
-        background-color: #2629d3;
-    }
-    .inst {
-        background-color: #ee009f;
-    }
-    .call {
-        background-color: #27bbe8;
-    }
+
 
     /* Link Styling */
     .whatsapp a, .gogl a, .fb a, .inst a, .call a {
-        color: white;
+        color: black;
         text-decoration: none;
-        margin-top: 8px;
+        /* margin-top: 8px; */
     }
 
     /* Responsive Design */
     @media (max-width: 768px) {
         /* Adjust position of Quick Contact */
+        .section-title {
+            gap: 100px;
+        }
         .quickcon {
             position: fixed;
         right: 10%;
-        bottom: 125px;
+        /* bottom: 125px; */
         z-index: 9999;
         display: flex;
         flex-direction: column;
@@ -114,10 +105,13 @@
     /* For very small screens like phones (max-width: 480px) */
     @media (max-width: 480px) {
         /* Adjust position for small screens */
+        .section-title {
+            gap: 10px;
+        }
         .quickcon {
             position: fixed;
         right: 8%;
-        bottom: 125px;
+        /* bottom: 125px; */
         z-index: 9999;
         display: flex;
         flex-direction: column;
@@ -136,6 +130,9 @@
     /* Extra small screens (e.g., very small devices) */
     @media (max-width: 320px) {
         /* More compact layout */
+        .section-title {
+            gap: 10px;
+        }
         .quickcon {
             right: 8%;
             bottom: 120px;
@@ -166,7 +163,7 @@
         </script>
 
     <!-- Footer Start -->
-    <div class="container-fluid footer wow fadeIn" data-wow-delay="0.1s" style="background-color:#FAF0E6; margin-top: -1%; padding-bottom: 0;">
+    <div class="container-fluid footer wow fadeIn" data-wow-delay="0.1s" style="background-color:#FAF0E6;  padding-bottom: 0;">
         <div class="container py-1 px-lg-1" style="padding-bottom: 2rem;">
             <div class="row g-3">
             
@@ -199,9 +196,9 @@
                 <div class="col-md-6 col-lg-5">
                     <p class="section-title text-black h5 mb-4" style=" justify-content:left;">Contact us<span></span></p>
                     <p><i class="fa fa-map-marker-alt me-2"></i><?php echo nl2br($address); ?></p>
-                    <p><i class="fa fa-phone-alt me-2"></i><t href="tel:+91<?php echo $phone; ?>" class="text-black"><?php echo $phone; ?></t></p>
+                    <p><i class="fa fa-phone-alt me-2"></i><t href="tel:+91<?php echo $phone; ?>" class="text-black "><?php echo $phone; ?></t></p>
                     <!-- <p><i class="bi bi-person-video2"></i><t href="tel:+91<?php echo $phone; ?>" class="text-black"><?php echo $phone; ?></t></p> -->
-                    <p><i class="fa fa-phone-alt me-2"></i><t href="tel:+91<?php echo $secondary_phone; ?>" class="text-black"><?php echo $secondary_phone; ?></t></p>
+                    <p style="margin-top:-10px;"><i class="fa fa-phone-alt me-2"></i><t href="tel:+91<?php echo $secondary_phone; ?>" class="text-black"><?php echo $secondary_phone; ?></t></p>
                     <p class="d-flex align-items-center">
                         <i class="fa fa-envelope me-2"></i>
                         <!-- <a href="mailto:<?php //echo $email; ?>" class="text-black"><?php //echo $email; ?></a> -->
@@ -222,8 +219,8 @@
                         </a>
                     </div>
                 </div>
-
-                <div class="col-md-6 col-lg-3">
+<!-- <div style="margin-top: 2px;"></div> -->
+                <div class="col-md-6 col-lg-3 mt-3">
                     <p class="section-title text-black h5 mb-4" style=" justify-content:left;">Quick Link<span></span></p>
                     <a class="btn btn-link" href="About">About Us</a>
                     <a class="btn btn-link" href="Contact">Contact Us</a>

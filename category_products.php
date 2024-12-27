@@ -163,6 +163,7 @@ $categoryQuery = mysqli_query($con, "
                     </div>
                     <?php
                     $lastCategory = $product['category_name'];
+                    
                 }
                 ?>
             </div>

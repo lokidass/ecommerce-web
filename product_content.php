@@ -9,7 +9,6 @@
     }
 
     .related-product-card {
-        min-width: 170px;
         max-width: 100%;
         margin-right: 15px;
         border: 1px solid #ddd;
@@ -50,7 +49,7 @@
 
     .category-sidebar form {
         position: sticky;
-        top: 0;
+        top: 100;
         z-index: 100;
     }
 
@@ -79,6 +78,7 @@
         .related-products-container {
             flex-wrap: wrap; /* Allow items to wrap on smaller screens */
             justify-content: center; /* Center products on mobile */
+            margin: 0; /* Remove margin for mobile view */
         }
 
         .category-sidebar {
@@ -94,7 +94,8 @@
     /* Small screens (mobile) */
     @media (max-width: 576px) {
         .related-product-card {
-            min-width: 150px;
+            min-width: 160px;
+            margin-left:-10px;
         }
 
         .related-product-card img {
@@ -110,15 +111,20 @@
             font-size: 16px;
             margin-bottom: 10px;
         }
+
+        .col {
+            margin-bottom: 15px; /* Ensure proper spacing between products */
+        }
     }
 </style>
 
+<div class="" style="margin-top:-100px;"></div>
 <div class="container-xxl py-1 mx-000">
     <div class="container py-0 px-lg-0">
         <div class="row">
             <!-- Sidebar for Category Filter -->
             <div class="col-lg-3 category-sidebar">
-                <form method="POST" id="categoryForm">
+                <form method="POST" id="categoryForm" class="d-none d-lg-block">
                     <h4 class="text-black">Product Category</h4>
                     <ul class="list-group">
                         <li class="list-group-item">
@@ -126,7 +132,15 @@
                             <label for="category_all">All Categories</label>
                         </li>
                         <?php
-                        $categoryQuery = mysqli_query($con, "SELECT id, name, (SELECT COUNT(*) FROM product_images WHERE category_id = categories.id) AS product_count FROM categories");
+                        $categoryQuery = mysqli_query($con, "
+                        SELECT 
+                            id, 
+                            name, 
+                            (SELECT COUNT(*) FROM product_images WHERE category_id = categories.id) AS product_count 
+                        FROM categories 
+                        ORDER BY position ASC
+                    ");
+                    
                         while ($row = mysqli_fetch_assoc($categoryQuery)) {
                             echo '
                             <li class="list-group-item">
@@ -137,6 +151,19 @@
                         ?>
                     </ul>
                 </form>
+
+                <div class="d-block d-lg-none">
+                    <h4 class="text-black mb-2">Product Category</h4>
+                    <select id="categoryDropdown" class="form-select">
+                        <option value="0" selected>All Categories</option>
+                        <?php
+                        $categoryQuery = mysqli_query($con, "SELECT id, name, (SELECT COUNT(*) FROM product_images WHERE category_id = categories.id) AS product_count FROM categories");
+                        while ($row = mysqli_fetch_assoc($categoryQuery)) {
+                            echo '<option value="' . htmlspecialchars($row['id']) . '">' . htmlspecialchars($row['name']) . ' (' . $row['product_count'] . ')</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
             </div>
 
             <!-- Product Container -->
@@ -151,13 +178,10 @@
                 $lastCategory = '';
 
                 while ($product = mysqli_fetch_assoc($result)) {
-                    // Check if this is a new category
                     if ($lastCategory != $product['category_name']) {
-                        // Close the previous category container if applicable
                         if ($lastCategory != '') {
-                            echo '</div>'; // Close the last category's product container
+                            echo '</div>';
                         }
-                        // Start a new category section
                         echo '<h3 class="category-heading d-flex justify-content-between align-items-center">';
                         echo htmlspecialchars($product['category_name']);
                         echo '</h3>';
@@ -165,12 +189,15 @@
                         $lastCategory = $product['category_name'];
                     }
 
-                    // Render the product card
                     echo '
                     <div class="col">
                     <div class="related-product-card d-flex flex-column position-relative" style="border: 1px solid #ddd; border-radius: 10px; overflow: hidden; height: 100%; margin-bottom: 20px;">
                         <a href="product_detail.php?product_id=' . htmlspecialchars($product['id']) . '" class="text-decoration-none d-flex flex-column flex-grow-1">
-                            <img src="admin/uploads/productimages/' . htmlspecialchars($product['img']) . '" class="card-img-top img-fluid" alt="' . htmlspecialchars($product['title']) . '">
+                            <img src="admin/uploads/productimages/' . htmlspecialchars($product['img']) .'" 
+                                class="card-img-top img-fluid" 
+                                alt="' . htmlspecialchars($product['title']) .'" 
+                                style="width: 100%;">
+
                             <div class="card-body d-flex flex-column flex-grow-1">
                                 <h5 class="card-title mb-2" style="font-size: 14px;">' . htmlspecialchars($product['title']) . '</h5>
                                 <s class="card-text mb-1" style="font-size: 13px; color: black;">₹' . number_format($product['costing'], 2) . '</s>
@@ -182,19 +209,48 @@
                     </div>';
                 }
 
-                // Close the last category's product container
                 if ($lastCategory != '') {
                     echo '</div>';
                 }
                 ?>
-
             </div>
         </div>
     </div>
 </div>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    $(document).ready(function () {
+    // Radio button change
+    $('input[name="category_id"]').on('change', function () {
+        var categoryId = $(this).val();
+        fetchProducts(categoryId);
+    });
+
+    // Dropdown change for mobile view
+    $('#categoryDropdown').on('change', function () {
+        var categoryId = $(this).val();
+        fetchProducts(categoryId);
+    });
+
+    // Trigger initial load
+    $('input[name="category_id"]:checked').trigger('change');
+
+    function fetchProducts(categoryId) {
+        $.ajax({
+            url: 'fetch_products.php',
+            type: 'POST',
+            data: { category_id: categoryId },
+            success: function (response) {
+                $('#productContainer').html(response);
+            },
+            error: function () {
+                alert('Failed to load products. Please try again.');
+            }
+        });
+    }
+});
+
+
     $(document).ready(function () {
         $('input[name="category_id"]').on('change', function () {
             var categoryId = $(this).val();

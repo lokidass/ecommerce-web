@@ -17,8 +17,8 @@
 
             while ($brand = mysqli_fetch_array($brandImages)) {
                 ?>
-                <div class="col-lg-2 col-md-4 col-sm-6 col-6 " data-wow-delay="<?= $delay ?>s">
-                    <div class="feature-item rounded text-center p-4">
+                <div class="col-lg-2 col-md-4 col-sm-6 col-6 " data-wow-delay="<?= $delay ?>s" >
+                    <div class="feature-item rounded text-center bg-white p-4">
                         <img src="admin/uploads/brandimages/<?= $brand['img'] ?>" class="img-fluid brand-logo" alt="Brand Image">
                     </div>
                 </div>
@@ -33,6 +33,7 @@
 
 <style>
     .brand-logo {
+        background-color:white;
         width: 100%;
         height: 50px; /* Adjust the height to ensure uniformity */
         object-fit: contain; /* Ensure the image fits within the given dimensions while maintaining aspect ratio */

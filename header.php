@@ -17,7 +17,6 @@ if ($result && mysqli_num_rows($result) > 0) {
     $logo_text = 'Your Brand';  // Default text if no logo or text is available
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,7 +24,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     <meta charset="utf-8">
     <title>Vimal Marketing And Services</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="" name="Water purification and solar Services in Amravati">
+    <meta content="Water purification and solar Services in Amravati" name="keywords">
     <meta content="Vimal Marketing And Services - We are one of the leading service providers in the fields of water purification and solar technology. We offer a wide range of high-quality products at affordable prices to ensure you have access to clean water and sustainable energy solutions." name="description">
     <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css" rel="stylesheet">
     <link href="img/Vimal Marketing Logo.jpg" rel="icon">
@@ -51,54 +50,107 @@ if ($result && mysqli_num_rows($result) > 0) {
 
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <style>
-    .navbar {
-        background-color: #F8F8F8 !important; 
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); /* Darker shadow effect */
-    }
+        .navbar {
+            background-color: rgb(255, 255, 255) !important;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+        }
 
-    .navbar .nav-link {
-        color: #000 !important; /* Force black color for nav links */
-    }
+        .navbar .nav-link {
+            color: #000 !important;
+        }
 
-    .navbar .nav-link:hover {
-        color: #007bff !important; /* Optional: Hover effect */
-    }
+        .navbar .nav-link:hover {
+            color: #007bff !important;
+        }
 
-    .navbar .nav-link.active {
-        color: #000 !important; /* Active nav link color */
-    }
+        .navbar .nav-link.active {
+            color: #000 !important;
+        }
 
-    .navbar-toggler {
-        border-color: #000; /* Black border for the toggle button */
-    }
+        .navbar-toggler {
+            border-color: #000;
+        }
 
-    .navbar-toggler-icon {
-        background-image: none; /* Remove default background image */
-        color: #000; /* Black color for the toggle icon */
-    }
+        .navbar-toggler-icon {
+            background-image: none;
+            color: #000;
+        }
 
-    .offcanvas {
-        background-color: #f8f8f8;
-    }
+        .offcanvas {
+            width: 80%;
+            background-color: #f8f8f8;
+        }
 
-    .offcanvas .nav-link {
-        color: #000;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
+        .offcanvas  img {
+            width: 30%;
+            background-color: #f8f8f8;
+        }
 
-    .offcanvas .nav-link:hover {
-        color: #007bff;
-    }
-</style>
+        .offcanvas .nav-link {
+            color: #000;
+            font-weight: bold;
+            /* margin-bottom: 10px; */
+        }
 
+        .offcanvas .nav-link:hover {
+            color: #007bff;
+        }
+
+        .navbar-brand img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand span {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: black;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-brand img {
+                width: 80px;
+                /* margin-left:-10px; */
+            }
+
+            .navbar-brand span {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar-brand img {
+                width: 60px;
+            }
+
+            .navbar-brand span {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 376px) {
+            .navbar-brand img {
+                width: 50px;
+                margin-left:-20px;
+            }
+
+            .navbar-brand span {
+                font-size: 1rem;
+           
+            }
+        }
+    </style>
 </head>
-
 <body>
     <div class="container-xxl bg-white p-0">
         <!-- Spinner Start -->
@@ -111,73 +163,66 @@ if ($result && mysqli_num_rows($result) > 0) {
 
         <!-- Navbar Start -->
         <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-    <a href="Home" class="navbar-brand p-0">
-        <h1 class="m-0">
-            <?php if (!empty($logo)) { ?>
-                <img src="admin/uploads/logos/<?php echo $logo; ?>" style="width: 100%; height: 150%;" alt="Logo">
-            <?php } elseif (!empty($logo_text)) { ?>
-                <span style="font-size: 2rem; font-weight: bold; color:white"><?php echo $logo_text; ?></span>
-            <?php } else { ?>
-                <span style="font-size: 2rem; font-weight: bold; color:white">Your Brand</span>
-            <?php } ?>
-        </h1>
-    </a>
+            <a href="Home" class="navbar-brand">
+                <?php if (!empty($logo)) { ?>
+                    <img src="admin/uploads/logos/<?php echo $logo; ?>" alt="Logo">
+                <?php } ?>
 
-    <!-- Navbar toggler button for mobile -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav">
-        <span class="fa fa-bars" style="color:white;"></span>
-    </button>
+                <span>
+                    <?php echo !empty($logo_text) ? $logo_text : 'Your Brand'; ?>
+                </span>
+            </a>
 
-    <!-- Desktop Navigation -->
-    <div class="collapse navbar-collapse" id="desktopNav">
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-                <a href="Home" class="nav-link text-black home-link">Home</a>
-            </li>
-            <li class="nav-item">
-                <a href="About" class="nav-link home-link">About</a>
-            </li>
-            <li class="nav-item">
-                <!-- <a href="Products" class="nav-link home-link">Our Products</a> -->
-            </li>
-            <li class="nav-item">
-                <a href="Customer_Support" class="nav-link home-link">Customer Support</a>
-            </li>
-            <li class="nav-item">
-                <a href="Contact" class="nav-link home-link">Contact</a>
-            </li>
-        </ul>
+            <!-- Navbar toggler button for mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-controls="mobileNav">
+                <span class="fa fa-bars"></span>
+            </button>
+
+            <!-- Desktop Navigation -->
+            <div class="collapse navbar-collapse" id="desktopNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="Home" class="nav-link text-black home-link">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="About" class="nav-link home-link">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Customer_Support" class="nav-link home-link">Customer Support</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="Contact" class="nav-link home-link">Contact</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Offcanvas Menu for Mobile -->
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
+                <div class="offcanvas-header">
+                
+                    <h5 class="offcanvas-title" id="mobileNavLabel"></h5>
+                    <img src="admin/uploads/logos/<?php echo $logo; ?>" alt="Logo">
+                    <button type="button" class="btn-close text-reset " style="margin-top: -40px;" data-bs-dismiss="offcanvas" aria-label="Close" ></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a href="Home" class="nav-link home-link">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="About" class="nav-link home-link">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="Customer_Support" class="nav-link home-link">Customer Support</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="Contact" class="nav-link home-link">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
     </div>
-
-    <!-- Offcanvas Menu for Mobile -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="mobileNavLabel">Menu</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a href="Home" class="nav-link home-link">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a href="About" class="nav-link home-link">About</a>
-                </li>
-                <li class="nav-item">
-                    <!-- <a href="Products" class="nav-link home-link">Our Products</a> -->
-                </li>
-                <li class="nav-item">
-                    <a href="Customer_Support" class="nav-link home-link">Customer Support</a>
-                </li>
-                <li class="nav-item">
-                    <a href="Contact" class="nav-link home-link">Contact</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-        <!-- Navbar End -->
-
 </body>
+
 </html>

@@ -76,7 +76,7 @@
                                 <th scope="col">Contact Number</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Address</th>
-                                <th scope="col">Products</th>
+                                <th scope="col">Category</th>
                                 <th scope="col">Time</th>
                                 <th scope="col" class="text-center" colspan="2">Action</th>
                             </tr>

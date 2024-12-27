@@ -2,6 +2,17 @@
 /*--------------------------------------------------------------
 # Contact
 --------------------------------------------------------------*/
+input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+
 .contact .info-box {
   color: #444444;
   text-align: center;
@@ -218,6 +229,7 @@
 
           <h5><i class="fa fa-phone-alt me-2"></i></i> Call Us</h5>
           <p><?php echo $primary_phone; ?></p>
+          <div style="margin-top:-17px;"></div>
           <p><?php echo $secondary_phone; ?></p>
 
 
@@ -243,6 +255,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Execute the query
     if (mysqli_query($con, $query)) {
         echo "<script>alert('Message sent successfully!');</script>";
+        echo '<script>window.location.href = window.location </script>';
         // You can also redirect to another page after submission
         // header("Location: thank_you.php");  // Uncomment to redirect
     } else {
@@ -253,18 +266,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!-- HTML Form -->
 <div class="col-lg-6">
-    <form action="contact.php" method="POST" class="php-email-form contact-form">
+    <form action="contact.php" method="POST" class="php-email-form contact-form" id="contactForm">
         <div class="form-group">
-            <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required>
+            <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required minlength="3" maxlength="50">
         </div>
         <div class="form-group">
-            <input type="number" name="number" class="form-control" id="number" placeholder="number" required>
+            <input type="number" name="number" class="form-control" id="number" placeholder="Mobile Number" required pattern="^\d{10}$" title="Please enter a valid 10-digit mobile number">
         </div>
         <div class="form-group">
             <input type="email" name="email" class="form-control" id="email" placeholder="Your Email" required>
         </div>
         <div class="form-group">
-            <textarea name="message" class="form-control" id="message" rows="5" placeholder="Your Message" required></textarea>
+            <textarea name="message" class="form-control" id="message" rows="5" placeholder="Your Message" required minlength="10" maxlength="500"></textarea>
         </div>
         <div class="text-center">
             <button class="btn text-white w-100 py-3" type="submit">Send Message</button>
@@ -275,4 +288,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     </div>
   </div>
+
+
+
+<!-- Optional: JavaScript for additional validation -->
+<script>
+    document.getElementById('contactForm').addEventListener('submit', function(event) {
+        let form = event.target;
+        let valid = true;
+
+        // Validate Name (min length of 3 characters)
+        const name = form.name.value;
+        if (name.length < 3) {
+            alert('Name must be at least 3 characters long');
+            valid = false;
+        }
+
+        // Validate Mobile Number (must be 10 digits)
+        const number = form.number.value;
+        if (!/^\d{10}$/.test(number)) {
+            alert('Please enter a valid 10-digit mobile number');
+            valid = false;
+        }
+
+        // Validate Email (standard email validation is handled by HTML5)
+        const email = form.email.value;
+        if (!email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
+            alert('Please enter a valid email address');
+            valid = false;
+        }
+
+        // Validate Message (min length of 10 characters)
+        const message = form.message.value;
+        if (message.length < 10) {
+            alert('Message must be at least 10 characters long');
+            valid = false;
+        }
+
+        // If validation fails, prevent form submission
+        if (!valid) {
+            event.preventDefault();
+        }
+    });
+</script>
+
 </section><!-- End Contact Section -->

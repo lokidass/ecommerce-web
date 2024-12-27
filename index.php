@@ -1,6 +1,18 @@
 <style>
-    body {
-        font-family: 'Sofia', sans-serif;
+    .hero-header{
+        margin-top: 60px;
+    }
+
+     @media (max-width: 576px) {
+        .btn {
+            padding: 0.5rem 1rem; /* Reduce padding */
+            font-size: 0.875rem; /* Smaller font size */
+        }
+
+        .container-xxxl, .hero-header, .mt-5{
+            margin-top: -20px;
+        }
+
     }
 </style>
 
@@ -16,7 +28,7 @@ $heading = $data['hheading'];
 $text = $data['htext'];
 ?>
 
-<div class="container-xxxl hero-header" style="margin-top:50px; background-color: #f1f1f;">
+<div class="container-xxxl hero-header " style=" background-color: #f1f1f;">
     <div class="container px-lg-5">
         <div class="row g-5 align-items-end">
         <div class="col-lg-7 text-center text-lg-start">
@@ -26,18 +38,18 @@ $text = $data['htext'];
     <p class="text-black pb-3 animated slideInDown">
         <?php echo $text; ?>
     </p>
-    <a href="Customer_Support" class="btn  text-white py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft">
-        Customer Help
-    </a>
-    <button class="btn    text-black py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft bg-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Write a Review
-    </button>
-</div>
+    <a href="Customer_Support" class="btn text-white py-2 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft">
+                    Customer Help
+                </a>
+                <button class="btn text-black py-2 px-4 px-sm-5 rounded-pill me-3 animated slideInLeft bg-light" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Write a Review
+                </button>
+    </div>
 
             
             <div class="col-lg-5 text-center text-lg-start">
                 <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
+                    <div class="carousel-inner ">
                         <?php
                         // Fetch images from the headerimage table
                         $result = mysqli_query($con, "SELECT * FROM `headerimage` ORDER BY `id` DESC");
@@ -111,13 +123,13 @@ $text = $data['htext'];
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary text-white" data-bs-dismiss="modal">Close</button>
+                <!-- <button type="button" class="btn btn-secondary text-white" data-bs-dismiss="modal">Close</button>   -->
                 <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
             </div>
         </div>
     </div>
 </div>
-<div style="margin-top:100px;"></div>
+<div style="margin-top:15%;"></div>
 
 
 <?php include('product_content.php'); ?>
@@ -213,11 +225,11 @@ if (isset($_POST['send'])) {
         </div>
     </div>
 </div>
-<div style="margin-top:100px;"></div>
+
 <?php //include('projects_content.php') ?> 
 <?php //include('contactform.php') ?>
 <!-- Testimonial Start -->
-<div class="container-xxl py-5" id="review" style="margin-top:-8%">
+<div class="container-xxl py-5" id="review" >
     <div class="container py-5 px-lg-5">
 
         <div class="wow fadeInUp" data-wow-delay="0.1s">
@@ -276,3 +288,4 @@ if (isset($_POST['submit'])) {
     }
 }
 ?>
+

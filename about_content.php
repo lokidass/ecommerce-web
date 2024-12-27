@@ -12,7 +12,6 @@ $hdesc = $data['hdesc'];
 $htdesc = $data['htdesc'];
 ?>
 
-
 <!-- Feature Start -->
 <?php
 // Fetch services from the serviceblock table
@@ -25,7 +24,6 @@ if ($result) {
     echo "Error fetching data: " . mysqli_error($con);
 }
 ?>
-
 
 <style>
     .black-text {
@@ -109,11 +107,7 @@ if ($result) {
         </div>
     </div>
 </div>
-
-
-
 <!-- Feature End -->
-
 
 <!-- About Start -->
 <div class="container-xxl py-5">
@@ -128,8 +122,8 @@ if ($result) {
 
             // Loop through each service and create the HTML
             foreach ($services as $service) {
-                echo '<div class="col-lg-4 wow fadeInUp" data-wow-delay="' . $delay . 's">';
-                echo '<div class="feature-item rounded text-center p-4 black-text">'; // Use a CSS class for black text
+                echo '<div class="col-lg-4 wow fadeInUp bg-white" data-wow-delay="' . $delay . 's">';
+                echo '<div class="feature-item rounded text-center p-4 black-text bg-white">'; // Use a CSS class for black text
                 
                 // Display the image
                 echo '<img src="data:' . htmlspecialchars($service['image_type']) . ';base64,' . base64_encode($service['image']) . '" alt="' . htmlspecialchars($service['title']) . '" class="service-image">';
@@ -160,7 +154,7 @@ $result = $con->query($sql);
 
 // Check if there are any results
 if ($result->num_rows > 0) {
-    echo '<div class="container-xxl bg-primary fact py-5 wow fadeInUp" data-wow-delay="0.5s">
+    echo '<div class="container-xxl fact py-5 wow fadeInUp" data-wow-delay="0.5s"  >
             <div class="container py-5 px-lg-5">
                 <div class="row g-4">';
     
@@ -168,8 +162,8 @@ if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         echo '<div class="col-md-6 col-lg-3 text-center wow fadeIn" data-wow-delay="0.5s">
                 <i class="fa ' . $row["icon_class"] . ' fa-3x text-secondary mb-3"></i>
-                <h1 class="text-white mb-2" data-toggle="counter-up">' . $row["fact_value"] . '</h1>
-                <p class="text-white mb-0">' . $row["fact_label"] . '</p>
+                <h1 class="text-black mb-2" data-toggle="counter-up">' . $row["fact_value"] . '</h1>
+                <p class="text-black mb-0">' . $row["fact_label"] . '</p>
               </div>';
     }
 
